@@ -3,44 +3,50 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function PostForm() {
-  const [postData, setPostData] = useState({
-    title: "",
-    body: "",
-    userId: 1, // Replace with a valid user ID
-  });
+  const [postData, setPostData] = useState({ title: "", body: "" });
 
-  const handleSubmit = async (e) => {
-    try {
-      e.preventdefault();
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        postData
-      );
-      console.log("Response:", response.data);
-      // Handle success, display a success message, or navigate to another page
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error and display an error message
-    }
+  const handleChange = (e) => {
+    setPostData({ ...postData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("https://jsonplaceholder.typicode.com/posts", postData)
+      .then((response) => {
+        console.log("Post created:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error creating post:", error);
+      });
   };
 
   return (
     <div>
-      <form>
-        <input
-          type="text"
-          placeholder="Title"
-          value={postData.title}
-          onChange={(e) => setPostData({ ...postData, title: e.target.value })}
-        />
-        <textarea
-          placeholder="Body"
-          value={postData.body}
-          onChange={(e) => setPostData({ ...postData, body: e.target.value })}
-        />
-        <button data-test="submit-button" onClick={handleSubmit}>
-          Submit
-        </button>
+      <h2>Create a Post</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="title">Title:</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={postData.title}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="body">Body:</label>
+          <textarea
+            id="body"
+            name="body"
+            value={postData.body}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <button type="submit">Submit</button>
+        </div>
       </form>
     </div>
   );
